@@ -11,21 +11,17 @@ import (
 )
 
 type Response struct {
-	//Text2     string
-	Text      string
 	IsTextSet bool
-	Success   bool
+	Text      string
+
+	Success bool
 }
 
-// DoSmth does something.
 func DoSmth() error {
 	resp, err := http.Get("localhost:8080/v1/some_op")
 	if err != nil {
-		return fmt.Errorf("failed to request: %w", err)
+		return err
 	}
-	defer func() {
-		resp.Body.Close()
-	}()
 
 	b, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -34,9 +30,7 @@ func DoSmth() error {
 
 	var req Response
 
-	if err := json.Unmarshal(b, &req); err != nil {
-		return fmt.Errorf("failed to unmarshal response body: %w", err)
-	}
+	json.Unmarshal(b, &req)
 
 	log.Printf("text: %s (%t)", req.Text, req.IsTextSet)
 	return nil
